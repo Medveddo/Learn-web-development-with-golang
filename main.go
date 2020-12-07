@@ -25,7 +25,7 @@ func contact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func faq(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, "<h1>FAQ</h1><ul><li><b>What a hell are doing?</b><p>"+
-		"I'm try to build a web application usign Golang.</p></li><li><b>Is that legal?</b>"+
+		"I'm try to build a web application using Golang.</p></li><li><b>Is that legal?</b>"+
 		"<p>Absolutely.</p></li></ul>")
 }
 
