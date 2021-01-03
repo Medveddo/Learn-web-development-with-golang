@@ -1,3 +1,3 @@
-# Lens Locked 
+# My first web application
 
-An awesome photo application written in Go
+Hi! In this repository I try to create simple web application by using Golang.
