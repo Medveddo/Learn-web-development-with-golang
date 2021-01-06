@@ -1,3 +1,20 @@
 <h1>Hello, {{.Name}}!</h1>
 <h1>Your character has {{.HP}} health points</h1>
 <h1>It can attack enemy and deal {{.Attack}} damage</h1>
+<h1>Boolean value: {{.Boolean}}</h1>
+<h1>Pi number: {{.FLvalue}}</h1>
+<b>The size of inventory is: {{.Invent.Size}}</b>
+<p>
+    Array: {{.Arr}}
+</p>
+<p>
+    Map: {{.Map.key1}}
+</p>
+<p>
+    {{range .Arr}}Slice item: {{.}}
+    {{end}}
+</p>
+<script>
+    var m = {{.Map}}
+    alert("{{.Name}}, always remember PI! {{.FLvalue}}")
+</script>
