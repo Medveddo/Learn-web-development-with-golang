@@ -1,53 +1,50 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
-	"math"
 	"os"
 )
 
-type Inventory struct {
-	Size int
-}
-
-type Character struct {
+type Data struct {
 	Name    string
-	HP      uint
-	Attack  uint
 	Boolean bool
-	FLvalue float64
-	Arr     []int
-	Map     map[string]string
-	Invent  Inventory
 }
 
 func main() {
-	var pi = math.Pi
+	// Get and parse our template file
 	t, err := template.ParseFiles("template.gohtml")
 	if err != nil {
 		panic(err)
 	}
 
-	inv := Inventory{Size: 33}
-	var data Character
-	data = Character{
+	var data Data = Data{
 		Name:    "Vitaly",
-		HP:      100,
-		Attack:  25,
 		Boolean: true,
-		FLvalue: pi,
-		Arr:     []int{10, 20, 30},
-		Map: map[string]string{
-			"key1": "value1", "key2": "value2",
-		},
-		Invent: inv,
 	}
 
-	fmt.Println(data.Arr)
+	//Execute our template with some data
+	err = t.Execute(os.Stdout, data)
+	if err != nil {
+		panic(err)
+	}
+
+	/*
+		<h1>Welcome to my website!</h1>
+		Glad to see you, Vitaly!
+	*/
+
+	data = Data{
+		Name:    "Unknown",
+		Boolean: false,
+	}
 
 	err = t.Execute(os.Stdout, data)
 	if err != nil {
 		panic(err)
 	}
+
+	/*
+		<h1>Welcome to my website!</h1>
+		If you want to save your experience, please <b><a href="#">LOG IN</a></b>
+	*/
 }
