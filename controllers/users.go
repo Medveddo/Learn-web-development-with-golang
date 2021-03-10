@@ -4,8 +4,6 @@ import (
 	"MyWebApp/views"
 	"fmt"
 	"net/http"
-
-	"github.com/gorilla/schema"
 )
 
 // NewUsers is used to create a new Users controller.
@@ -32,7 +30,9 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//using struct tags
+// SignupForm is a struct that contains data
+// that we can get from web form
+// We use struct tags which helps us decode data using schema package
 type SignupForm struct {
 	Email    string `schema:"email"`
 	Password string `schema:"password"`
@@ -43,15 +43,9 @@ type SignupForm struct {
 //
 // POST /signup
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		panic(err)
-	}
-
-	dec := schema.NewDecoder()
 	var form SignupForm
-	if err := dec.Decode(&form, r.PostForm); err != nil {
+	if err := parseForm(r, &form); err != nil {
 		panic(err)
 	}
 	fmt.Fprintln(w, form)
-
 }
