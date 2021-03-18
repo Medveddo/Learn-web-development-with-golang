@@ -21,7 +21,7 @@ func NewView(layout string, files ...string) *View {
 	if err != nil {
 		panic(err)
 	}
-	// Creating a View with Template = t and get a pointer by &
+	// Creating a View with Template = t and return a pointer by &
 	return &View{
 		Template: t,
 		Layout:   layout,

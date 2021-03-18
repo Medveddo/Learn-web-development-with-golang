@@ -13,6 +13,7 @@ func parseForm(r *http.Request, dst interface{}) error {
 		return err
 	}
 	dec := schema.NewDecoder()
+	// Decode data from past form to destination data dst which can be any type
 	if err := dec.Decode(dst, r.PostForm); err != nil {
 		return err
 	}
