@@ -28,30 +28,19 @@ func main() {
 	defer db.Close()
 
 	var id int
+	var name, email string
 
-	err = db.QueryRow(`
-		INSERT INTO  users(name, email)
-		VALUES($1,$2)
-		RETURNING id`,
-		"Kek Ivanovich",
-		"kek.lol@gmail.com").Scan(&id)
+	row := db.QueryRow(`
+	SELECT id, name, email
+	FROM users
+	WHERE id=$1`, 3)
+	err = row.Scan(&id, &name, &email)
 	if err != nil {
-		panic(err)
+		if err == sql.ErrNoRows {
+			fmt.Println("no rows")
+		} else {
+			panic(err)
+		}
 	}
-	fmt.Println("Inserted user's id: ", id)
-	db.Close()
-	/*
-		C:\Go\src\MyWebApp\exp>go run main.go
-		Inserted user's id:  2
-
-		C:\Go\src\MyWebApp\exp>go run main.go
-		Inserted user's id:  3
-
-		mywebapp_dev=# SELECT * from users;
-		id |      name      |          email
-		----+----------------+--------------------------
-		1 | Vitaly Sizikov | vitaly.sizikov@gmail.com
-		2 | Vitaly Sizikov | vitaly.sizikov@gmail.com
-		3 | Kek Ivanovich  | kek.lol@gmail.com
-	*/
+	fmt.Println("id", id, "name", name, "email", email)
 }
