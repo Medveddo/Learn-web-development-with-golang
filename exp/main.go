@@ -27,31 +27,42 @@ func main() {
 	}
 	defer db.Close()
 
-	type User struct {
-		ID    int
-		Name  string
-		Email string
-	}
-	var users []User
+	/* INSERTING SOME VALUES
+	for i := 1; i <= 6; i++ {
+		userID := 1
+		if i > 3 {
+			userID = 3
+		}
+		amount := i * 100
+		description := fmt.Sprintf("USB-C Adapter x%d", i)
 
-	rows, err := db.Query(`
-	SELECT id, name, email
-	FROM users`)
+		_, err = db.Exec(`
+		INSERT INTO orders(user_id,amount,description)
+		VALUES ($1, $2, $3)`, userID, amount, description)
 
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var user User
-		err := rows.Scan(&user.ID, &user.Name, &user.Email)
 		if err != nil {
 			panic(err)
 		}
-		users = append(users, user)
+	}
+	*/
+
+	rows, err := db.Query(`
+	SELECT *
+	FROM users
+	INNER JOIN orders  ON users.id = orders.user_id`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		var userID, orderID, amount int
+		var email, name, desc string
+		if err := rows.Scan(&userID, &name, &email, &orderID, &userID, &amount, &desc); err != nil {
+			panic(err)
+		}
+		fmt.Println("userID:", userID, "name:", name, "email:", email,
+			"orderID:", orderID, "amount:", amount, "desc:", desc)
 	}
 	if rows.Err() != nil {
-		// handle this err
+		panic(err)
 	}
-	fmt.Println(users)
 }
