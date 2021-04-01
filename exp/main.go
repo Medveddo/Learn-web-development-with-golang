@@ -36,28 +36,28 @@ func main() {
 	db.LogMode(true)        // Enable logging to see all SQL queries underlying
 	db.AutoMigrate(&User{}) // Creating a users table if it doesn't exist or modify it
 
-	// Adding some records
-	// db.Create(&User{Name: "Sizikov Vitaly", Email: "sizikov.vitaly@gmail.com", Color: "blue"})
-	// db.Create(&User{Name: "Dasha Malko", Email: "malkodasha25@gmail.com", Color: "green"})
-	// db.Create(&User{Name: "Sergey Kolmogorov", Email: "kekivan@gmail.com", Color: "black"})
-
-	// Querying records using Not() function
-	// var users []User
-	// if err := db.Not("color = ?", "green").Find(&users).Error; err != nil {
-	// 	panic(err)
+	// Query Raw SQL with Scan
+	// type Result struct {
+	// 	ID    int
+	// 	Name  string
+	// 	Email string
+	// 	Color string
 	// }
-	// fmt.Println(users)
+	// var result Result
+	// db.Raw("SELECT id, name, email, color FROM users WHERE id = ?", 2).Scan(&result)
+	// fmt.Printf("%+v\n", result)
+	// {ID:2 Name:Dasha Malko Email:malkodasha25@gmail.com Color:green}
 
-	// Querying records using Where() and Or() function
-	// var users []User
-	// if err := db.Where("name = ?", "Sizikov Vitaly").Or("color = ?", "green").Find(&users).Error; err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println(users)
+	// Query getting result as *sql.Row
+	// var name, email string
+	// row := db.Raw("SELECT name, email from USERS where name = ?", "Sizikov Vitaly").Row()
+	// row.Scan(&name, &email)
+	// fmt.Println(name, email)
+	// Sizikov Vitaly sizikov.vitaly@gmail.com
 
-	var users []User
-	if err := db.Where("name LIKE ?", "%gey%").Find(&users).Error; err != nil {
-		panic(err)
-	}
-	fmt.Println(users)
+	// Update Raw SQL
+	db.Exec("UPDATE users SET name = ? WHERE id = ?", "Vitaly Sizikov", 1)
+	var u User
+	db.Where("id = ?", 1).First(&u)
+	fmt.Println(u)
 }
