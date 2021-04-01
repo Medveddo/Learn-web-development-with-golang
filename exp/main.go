@@ -15,6 +15,12 @@ const (
 	dbname   = "mywebapp_dev"
 )
 
+type User struct {
+	gorm.Model
+	Name  string
+	Email string `gorm:"not null;unique_index"`
+}
+
 func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
@@ -27,4 +33,7 @@ func main() {
 	if err = db.DB().Ping(); err != nil {
 		panic(err)
 	}
+
+	//db.DropTableIfExists(&User{})
+	db.AutoMigrate(&User{})
 }
