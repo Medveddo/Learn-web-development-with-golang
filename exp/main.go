@@ -33,18 +33,46 @@ func main() {
 	defer db.Close()
 	db.LogMode(true)
 	db.AutoMigrate(&User{})
-	var users []User // = User{
-	// 	Color: "Red",
-	// 	Email: "medveddo@gmail.com",
+	var u User
+
+	// EXAMPLE 1
+	// db = db.Where("email = ?", "blah@blah.com").First(&u)
+	// if db.Error != nil {
+	// 	panic(db.Error)
 	// }
-	//db.First(&u)
-	//db.Last(&u)
-	//db.First(&u, "color = ?", "Red")
-	// db.Where("color = ?", "Red").
-	// 	Where("id > ?", 3).
-	// 	First(&u)
-	//db.Where(u).First(&u)
-	db.Find(&users)
-	fmt.Println(len(users))
-	fmt.Println(users)
+
+	// EXAMPLE 2
+	// if err := db.Where("email = ?", "blah@blah.com").First(&u).Error; err != nil {
+	// 	panic(err)
+	// }
+
+	// EXAMPLE 3
+	// db = db.Where("email = ?", "blah@blah.com").First(&u)
+	// errors := db.GetErrors()
+	// if len(errors) > 0 {
+	// 	fmt.Println(errors)
+	// 	os.Exit(1)
+	// }
+
+	// EXAMPLE 4
+	// db = db.Where("email = ?", "blah@blah.com").First(&u)
+	// if db.RecordNotFound() {
+	// 	fmt.Println("No user found")
+	// } else if db.Error != nil {
+	// 	panic(db.Error)
+	// } else {
+	// 	fmt.Println(u)
+	// }
+
+	// EXAMPLE 5
+	if err := db.Where("email = ?", "blah@blah.com").First(&u).Error; err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			fmt.Println("No user found")
+		default:
+			panic(err)
+		}
+	}
+	fmt.Println(u)
+
 }
