@@ -17,9 +17,17 @@ const (
 
 type User struct {
 	gorm.Model
-	Name  string
-	Email string `gorm:"not null;unique_index"`
-	Color string
+	Name   string
+	Email  string `gorm:"not null;unique_index"`
+	Color  string
+	Orders []Order
+}
+
+type Order struct {
+	gorm.Model
+	UserID      uint
+	Amount      int
+	Description string
 }
 
 func main() {
@@ -32,47 +40,33 @@ func main() {
 	}
 	defer db.Close()
 	db.LogMode(true)
-	db.AutoMigrate(&User{})
-	var u User
+	db.AutoMigrate(&User{}, &Order{})
 
-	// EXAMPLE 1
-	// db = db.Where("email = ?", "blah@blah.com").First(&u)
-	// if db.Error != nil {
-	// 	panic(db.Error)
-	// }
-
-	// EXAMPLE 2
-	// if err := db.Where("email = ?", "blah@blah.com").First(&u).Error; err != nil {
+	// var u User
+	// if err := db.Preload("Orders").Where("color = ?", "Red").First(&u).Error; err != nil {
 	// 	panic(err)
 	// }
+	//fmt.Println(u)
 
-	// EXAMPLE 3
-	// db = db.Where("email = ?", "blah@blah.com").First(&u)
-	// errors := db.GetErrors()
-	// if len(errors) > 0 {
-	// 	fmt.Println(errors)
-	// 	os.Exit(1)
-	// }
-
-	// EXAMPLE 4
-	// db = db.Where("email = ?", "blah@blah.com").First(&u)
-	// if db.RecordNotFound() {
-	// 	fmt.Println("No user found")
-	// } else if db.Error != nil {
-	// 	panic(db.Error)
-	// } else {
-	// 	fmt.Println(u)
-	// }
-
-	// EXAMPLE 5
-	if err := db.Where("email = ?", "blah@blah.com").First(&u).Error; err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			fmt.Println("No user found")
-		default:
-			panic(err)
-		}
+	var users []User
+	if err := db.Preload("Orders").Find(&users).Error; err != nil {
+		panic(nil)
 	}
-	fmt.Println(u)
+	fmt.Println(users)
 
+	// createOrder(db, u, 1001, "Fake description #1")
+	// createOrder(db, u, 9999, "Fake description #2")
+	// createOrder(db, u, 100, "Fake description #3")
+
+}
+
+func createOrder(db *gorm.DB, user User, amount int, desc string) {
+	err := db.Create(&Order{
+		UserID:      user.ID,
+		Amount:      amount,
+		Description: desc,
+	}).Error
+	if err != nil {
+		panic(err)
+	}
 }
