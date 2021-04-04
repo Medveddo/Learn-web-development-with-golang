@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"learn-web-dev-with-go/models"
 	"learn-web-dev-with-go/views"
 	"net/http"
 )
@@ -10,14 +11,16 @@ import (
 // This function will panic if the templates are not
 // parsed correctly, and should only be used during
 // initial setup.
-func NewUsers() *Users {
+func NewUsers(us *models.UserService) *Users {
 	return &Users{
 		NewView: views.NewView("bootstrap", "users/new"),
+		us:      us,
 	}
 }
 
 type Users struct {
 	NewView *views.View
+	us      *models.UserService
 }
 
 // New is used to render the form where a user can
@@ -34,6 +37,7 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 // that we can get from web form
 // We use struct tags which helps us decode data using schema package
 type SignupForm struct {
+	Name     string `schema:"name"`
 	Email    string `schema:"email"`
 	Password string `schema:"password"`
 }
@@ -47,5 +51,15 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	if err := parseForm(r, &form); err != nil {
 		panic(err)
 	}
+	fmt.Println(form)
+	user := models.User{
+		Name:  form.Name,
+		Email: form.Email,
+	}
+	if err := u.us.Create(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	fmt.Fprintln(w, form)
 }
