@@ -26,9 +26,15 @@ func main() {
 	}
 	defer us.Close()
 
-	userByAge, err := us.ByAge(18)
+	userInAgeRange, err := us.InAgeRange(18, 30)
+	// &[{{2 2021-04-04 18:01:19.502065 +0700 +07 2021-04-04 18:01:19.502065 +0700 +07 <nil>} Vitaly Sizikov 18 sizikov.vitaly@gmail.com}
+	// {{3 0001-01-01 00:00:00 +0000 UTC 0001-01-01 00:00:00 +0000 UTC <nil>}  25 bob@bob.com}]
+
+	//userInAgeRange, err := us.InAgeRange(1, 2)
+	//&[]
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(userByAge)
+	fmt.Println(userInAgeRange)
+
 }
