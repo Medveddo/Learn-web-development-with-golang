@@ -26,6 +26,7 @@ func main() {
 	}
 	defer us.Close()
 	us.DestructiveReset()
+
 	user := models.User{
 		Name:  "Michael Scott",
 		Email: "miScott@gmail.com",
@@ -33,9 +34,23 @@ func main() {
 	if err := us.Create(&user); err != nil {
 		panic(err)
 	}
-	// user, err := us.ByID(1)
+	if err := us.Delete(user.ID); err != nil {
+		panic(err)
+	}
+	// user.Email = "mich@mail.ru"
+	// if err := us.Update(&user); err != nil {
+	// 	panic(err)
+	// }
+
+	// userByEmail, err := us.ByEmail("mich@mail.ru")
 	// if err != nil {
 	// 	panic(err)
 	// }
-	fmt.Println(user)
+	// fmt.Println(userByEmail)
+
+	userByID, err := us.ByID(user.ID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(userByID)
 }
