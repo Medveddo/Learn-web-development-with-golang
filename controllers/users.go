@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"MyWebApp/views"
 	"fmt"
+	"learn-web-dev-with-go/views"
 	"net/http"
 )
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"MyWebApp/controllers"
+	"learn-web-dev-with-go/controllers"
 	"net/http"
 
-	"github.com/gorilla/mux/"
+	"github.com/gorilla/mux"
 )
 
 func main() {
