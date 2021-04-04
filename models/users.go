@@ -58,6 +58,13 @@ func (us *UserService) ByEmail(email string) (*User, error) {
 	return &user, err
 }
 
+func (us *UserService) ByAge(age uint) (*User, error) {
+	var user User
+	db := us.db.Where("age = ?", age)
+	err := first(db, &user)
+	return &user, err
+}
+
 // first will query using the provided gorm.DB and it will
 // get the first item returned and place it into dst. If
 // nothing is found in query, it will return ErrNotFound
