@@ -38,6 +38,7 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 // We use struct tags which helps us decode data using schema package
 type SignupForm struct {
 	Name     string `schema:"name"`
+	Age      uint   `schema:"age"`
 	Email    string `schema:"email"`
 	Password string `schema:"password"`
 }
@@ -55,6 +56,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	user := models.User{
 		Name:  form.Name,
 		Email: form.Email,
+		Age:   form.Age,
 	}
 	if err := u.us.Create(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

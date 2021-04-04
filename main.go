@@ -14,7 +14,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "111"
-	dbname   = "mywebapp_dev"
+	dbname   = "mywebapp_9ex"
 )
 
 func main() {

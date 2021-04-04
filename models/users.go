@@ -19,6 +19,7 @@ var (
 type User struct {
 	gorm.Model
 	Name  string
+	Age   uint
 	Email string `gorm:"not null;unique_index"`
 }
 
