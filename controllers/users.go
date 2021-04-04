@@ -40,7 +40,6 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 // We use struct tags which helps us decode data using schema package
 type SignupForm struct {
 	Name     string `schema:"name"`
-	Age      uint   `schema:"age"`
 	Email    string `schema:"email"`
 	Password string `schema:"password"`
 }
