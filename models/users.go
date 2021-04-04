@@ -5,6 +5,8 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -14,13 +16,20 @@ var (
 	// Returned when an invalid ID is provided
 	// to a method like Delete.
 	ErrInvalidID = errors.New("models: ID provided was invalid")
+
+	// Returned when an invalid password is used
+	// when attempting to authenticate a user
+	ErrInvalidPassword = errors.New("models: incorrect password provided")
 )
+
+const userPwPepper = "secret-random-string"
 
 type User struct {
 	gorm.Model
-	Name  string
-	Age   uint
-	Email string `gorm:"not null;unique_index"`
+	Name         string
+	Email        string `gorm:"not null;unique_index"`
+	Password     string `gorm:"-"`
+	PasswordHash string `gorm:"not null"`
 }
 
 type UserService struct {
@@ -58,23 +67,30 @@ func (us *UserService) ByEmail(email string) (*User, error) {
 	return &user, err
 }
 
-// Looks up a first user with the given age
-func (us *UserService) ByAge(age uint) (*User, error) {
-	var user User
-	db := us.db.Where("age = ?", age)
-	err := first(db, &user)
-	return &user, err
-}
-
-// Returns a pointer to a slice of users with age between age_from and age_to
-// If users not found returns a empty slice without an error
-func (us *UserService) InAgeRange(age_from uint, age_to uint) (*[]User, error) {
-	var users []User
-	err := us.db.Where("age BETWEEN ? AND ?", age_from, age_to).Find(&users).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+// can be used to authenticate a user with the
+// provided email and password.
+// If the email address provided is invalid, this will return
+//  nil, ErrNotFound
+// If the password provided is invalid, this will return
+//  nil, ErrInvalidPassword
+// Otherwise if another error is encountered this will return
+//  nil, error
+func (us *UserService) Authenticate(email, password string) (*User, error) {
+	foundUser, err := us.ByEmail(email)
+	if err != nil {
 		return nil, err
 	}
-	return &users, nil
+	err = bcrypt.CompareHashAndPassword([]byte(foundUser.PasswordHash), []byte(password+userPwPepper))
+	if err != nil {
+		switch err {
+		case bcrypt.ErrMismatchedHashAndPassword:
+			return nil, ErrInvalidPassword
+		default:
+			return nil, err
+		}
+	}
+	return foundUser, nil
+
 }
 
 // first will query using the provided gorm.DB and it will
@@ -105,6 +121,17 @@ func (us *UserService) Delete(id uint) error {
 //Create the provided user and backfill data
 //  like the ID, CreatedAt, and UpdatedAt
 func (us *UserService) Create(user *User) error {
+	// pass, salt
+	// hash(pass+salt)
+	// salt = per user (bcrypt does salt for us (?))
+	// pepper = per application
+	pwBytes := []byte(user.Password + userPwPepper)
+	hashedBytes, err := bcrypt.GenerateFromPassword(pwBytes, bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.PasswordHash = string(hashedBytes)
+	user.Password = ""
 	return us.db.Create(user).Error
 }
 
