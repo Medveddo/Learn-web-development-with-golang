@@ -25,10 +25,17 @@ func main() {
 		panic(err)
 	}
 	defer us.Close()
-	//us.DestructiveReset()
-	user, err := us.ByID(2)
-	if err != nil {
+	us.DestructiveReset()
+	user := models.User{
+		Name:  "Michael Scott",
+		Email: "miScott@gmail.com",
+	}
+	if err := us.Create(&user); err != nil {
 		panic(err)
 	}
+	// user, err := us.ByID(1)
+	// if err != nil {
+	// 	panic(err)
+	// }
 	fmt.Println(user)
 }
