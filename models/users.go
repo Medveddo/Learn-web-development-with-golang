@@ -2,6 +2,8 @@ package models
 
 import (
 	"errors"
+	"learn-web-dev-with-go/hash"
+	"learn-web-dev-with-go/rand"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -23,6 +25,7 @@ var (
 )
 
 const userPwPepper = "secret-random-string"
+const hmacSecretKey = "secret-hmac-key"
 
 type User struct {
 	gorm.Model
@@ -30,10 +33,13 @@ type User struct {
 	Email        string `gorm:"not null;unique_index"`
 	Password     string `gorm:"-"`
 	PasswordHash string `gorm:"not null"`
+	Remember     string `gorm:"-"`
+	RememberHash string `gorm:"not null;unique_index"`
 }
 
 type UserService struct {
-	db *gorm.DB
+	db   *gorm.DB
+	hmac hash.HMAC
 }
 
 func NewUserService(connectionInfro string) (*UserService, error) {
@@ -43,8 +49,10 @@ func NewUserService(connectionInfro string) (*UserService, error) {
 		return nil, err
 	}
 	db.LogMode(true)
+	hmac := hash.NewHMAC(hmacSecretKey)
 	return &UserService{
-		db: db,
+		db:   db,
+		hmac: hmac,
 	}, nil
 }
 
@@ -65,6 +73,21 @@ func (us *UserService) ByEmail(email string) (*User, error) {
 	db := us.db.Where("email = ?", email)
 	err := first(db, &user)
 	return &user, err
+}
+
+// ByRemember looks up a user with the given remember token
+// and returns that user. This method will handle hashing
+// the token for us
+// Errors are the same as ByEmail and ByID
+func (us *UserService) ByRemember(token string) (*User, error) {
+	var user User
+	rememberHash := us.hmac.Hash(token)
+	err := first(us.db.Where("remember_hash = ?", rememberHash), &user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+
 }
 
 // can be used to authenticate a user with the
@@ -106,6 +129,9 @@ func first(db *gorm.DB, dst interface{}) error {
 
 //Update the provided user with all of the data
 func (us *UserService) Update(user *User) error {
+	if user.Remember != "" {
+		user.RememberHash = us.hmac.Hash(user.Remember)
+	}
 	return us.db.Save(user).Error
 }
 
@@ -118,7 +144,7 @@ func (us *UserService) Delete(id uint) error {
 	return us.db.Delete(&user).Error
 }
 
-//Create the provided user and backfill data
+//	Create the provided user and backfill data
 //  like the ID, CreatedAt, and UpdatedAt
 func (us *UserService) Create(user *User) error {
 	// pass, salt
@@ -132,6 +158,14 @@ func (us *UserService) Create(user *User) error {
 	}
 	user.PasswordHash = string(hashedBytes)
 	user.Password = ""
+	if user.Remember == "" {
+		token, err := rand.RememberToken()
+		if err != nil {
+			return err
+		}
+		user.Remember = token
+	}
+	user.RememberHash = us.hmac.Hash(user.Remember)
 	return us.db.Create(user).Error
 }
 

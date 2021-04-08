@@ -1,21 +1,44 @@
 package main
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
-	"learn-web-dev-with-go/hash"
+	"learn-web-dev-with-go/models"
+)
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "111"
+	dbname   = "mywebapp_dev"
 )
 
 func main() {
-	toHash := []byte("this is my string to hash")
-	h := hmac.New(sha256.New, []byte("my-secret-key"))
-	h.Write(toHash)
-	b := h.Sum(nil)
-	fmt.Println(base64.URLEncoding.EncodeToString(b))
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	us, err := models.NewUserService(psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer us.Close()
+	us.DestructiveReset()
+	// us.AutoMigrate()
 
-	hmac := hash.NewHMAC("my-secret-key")
-	fmt.Println(hmac.Hash("this is my string to hash"))
-
+	user := models.User{
+		Name:     "Sizikov Vitaly",
+		Email:    "sizikov.vitaly1@gmail.com",
+		Password: "111",
+		Remember: "abc123",
+	}
+	err = us.Create(&user)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", user)
+	user2, err := us.ByRemember("abc123")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", *user2)
 }
