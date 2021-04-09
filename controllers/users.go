@@ -102,7 +102,21 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/cookietest", http.StatusFound)
+
+	cameCookie, err := r.Cookie("came_from_url")
+
+	// cameCookie does not exist
+	if err != nil {
+		//http: named cookie not present
+		// Successful login
+		// standart redirect
+		http.Redirect(w, r, "/dashboard", http.StatusFound)
+		return
+	}
+
+	// cameCookie exist
+	// redirect on a page where user came from
+	http.Redirect(w, r, cameCookie.Value, http.StatusFound)
 }
 
 // is used to sign in the given user via cookies
