@@ -1,44 +1,39 @@
 package main
 
-import (
-	"fmt"
-	"learn-web-dev-with-go/models"
-)
+import "fmt"
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "111"
-	dbname   = "mywebapp_dev"
-)
+type Cat struct{}
+
+func (c Cat) Speak() {
+	fmt.Println("Meow")
+}
+
+type Dog struct{}
+
+func (d Dog) Speak() {
+	fmt.Println("Woof")
+}
+
+type Husky struct {
+	Speaker // Embedding
+}
+
+type SpeakerPrefixer struct {
+	Speaker // Chaining
+}
+
+func (sp SpeakerPrefixer) Speak() {
+	fmt.Print("Prefix: ")
+	sp.Speaker.Speak()
+}
+
+type Speaker interface {
+	Speak()
+}
 
 func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	us, err := models.NewUserService(psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer us.Close()
-	us.DestructiveReset()
-	// us.AutoMigrate()
-
-	user := models.User{
-		Name:     "Sizikov Vitaly",
-		Email:    "sizikov.vitaly1@gmail.com",
-		Password: "111",
-		Remember: "abc123",
-	}
-	err = us.Create(&user)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%+v\n", user)
-	user2, err := us.ByRemember("abc123")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%+v\n", *user2)
+	h := Husky{SpeakerPrefixer{Cat{}}}
+	h.Speak() // equals to h.Dog.Speak()
+	h1 := Husky{SpeakerPrefixer{Dog{}}}
+	h1.Speak()
 }
