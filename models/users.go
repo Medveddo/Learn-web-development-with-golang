@@ -266,7 +266,7 @@ func (uv *userValidator) normalizeEmail(user *User) error {
 
 func (uv *userValidator) requireEmail(user *User) error {
 	if user.Email == "" {
-		return errors.New("Email address is required") // Can be moved to global errors section
+		return errors.New("email address is required") // Can be moved to global errors section
 	}
 	return nil
 }
