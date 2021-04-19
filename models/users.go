@@ -4,6 +4,7 @@ import (
 	"errors"
 	"learn-web-dev-with-go/hash"
 	"learn-web-dev-with-go/rand"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -148,6 +149,18 @@ type userValidator struct {
 	hmac hash.HMAC
 }
 
+// ByEmail will normalize the email address before calling
+// ByEmail on the UserDB layer
+func (uv *userValidator) ByEmail(email string) (*User, error) {
+	user := User{
+		Email: email,
+	}
+	if err := runUserValFuncs(&user, uv.normalizeEmail); err != nil {
+		return nil, err
+	}
+	return uv.UserDB.ByEmail(user.Email)
+}
+
 // ByRemember will hash the remember token and then call
 // ByRemember on the subsequent UserDB layer
 func (uv *userValidator) ByRemember(token string) (*User, error) {
@@ -163,7 +176,11 @@ func (uv *userValidator) ByRemember(token string) (*User, error) {
 //	Create the provided user and backfill data
 //  like the ID, CreatedAt, and UpdatedAt
 func (uv *userValidator) Create(user *User) error {
-	err := runUserValFuncs(user, uv.bcryptPassword, uv.setRememberIfUnset, uv.hmacRemember)
+	err := runUserValFuncs(user,
+		uv.bcryptPassword,
+		uv.setRememberIfUnset,
+		uv.hmacRemember,
+		uv.normalizeEmail)
 	if err != nil {
 		return err
 	}
@@ -172,7 +189,10 @@ func (uv *userValidator) Create(user *User) error {
 
 //Update will hash a remember token if it provided
 func (uv *userValidator) Update(user *User) error {
-	err := runUserValFuncs(user, uv.bcryptPassword, uv.hmacRemember)
+	err := runUserValFuncs(user,
+		uv.bcryptPassword,
+		uv.hmacRemember,
+		uv.normalizeEmail)
 	if err != nil {
 		return err
 	}
@@ -236,11 +256,9 @@ func (uv *userValidator) idGreaterThan(n uint) userValFunc {
 	})
 }
 
-// Another way to validate the ID
-func (uv *userValidator) idGreaterThanZero(user *User) error {
-	if user.ID <= 0 {
-		return ErrInvalidID
-	}
+func (uv *userValidator) normalizeEmail(user *User) error {
+	user.Email = strings.ToLower(user.Email)
+	user.Email = strings.TrimSpace(user.Email)
 	return nil
 }
 
