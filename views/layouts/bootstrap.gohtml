@@ -12,7 +12,7 @@
   <body>
     {{template "navbar"}}
 <main class="container">
-    {{template "alert"}}
+    {{template "alert" .}}
     {{template "yield" .}}
 
     {{template "footer"}}

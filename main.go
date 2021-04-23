@@ -36,7 +36,7 @@ func main() {
 	r.Handle("/contact", staticC.Contact).Methods("GET")
 	r.Handle("/faq", staticC.FAQ).Methods("GET")
 	r.Handle("/login", usersC.LoginView).Methods("GET")
-	r.Handle("/signup", usersC.NewView).Methods("GET")
+	r.HandleFunc("/signup", usersC.New).Methods("GET")
 	r.HandleFunc("/cookietest", usersC.CookieTest).Methods("GET")
 
 	r.HandleFunc("/signup", usersC.Create).Methods("POST")
