@@ -23,3 +23,23 @@ type Data struct {
 	Alert *Alert
 	Yield interface{}
 }
+
+func (d *Data) SetAlert(err error) {
+	// if err implements the PublicError interface
+	if pErr, ok := err.(PublicError); ok {
+		d.Alert = &Alert{
+			Level:   AlertLvlError,
+			Message: pErr.Public(),
+		}
+	} else {
+		d.Alert = &Alert{
+			Level:   AlertLvlError,
+			Message: AlertMsgGeneric,
+		}
+	}
+}
+
+type PublicError interface {
+	error // Equals to Error() string
+	Public() string
+}
