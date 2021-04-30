@@ -357,9 +357,9 @@ type userGorm struct {
 	db *gorm.DB
 }
 
-func newUserGorm(connectionInfro string) (*userGorm, error) {
+func newUserGorm(connectionInfo string) (*userGorm, error) {
 	// Connecting to our database
-	db, err := gorm.Open("postgres", connectionInfro)
+	db, err := gorm.Open("postgres", connectionInfo)
 	if err != nil {
 		return nil, err
 	}
