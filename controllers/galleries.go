@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"learn-web-dev-with-go/context"
 	"learn-web-dev-with-go/models"
 	"learn-web-dev-with-go/views"
@@ -62,6 +63,32 @@ func (g *Galleries) Edit(w http.ResponseWriter, r *http.Request) {
 	var vd views.Data
 	vd.Yield = gallery
 	g.EditView.Render(w, vd)
+}
+
+// POST /galleries/:id/update
+func (g *Galleries) Update(w http.ResponseWriter, r *http.Request) {
+	gallery, err := g.galleryByID(w, r)
+	if err != nil {
+		return
+	}
+	user := context.User(r.Context())
+	if gallery.UserID != user.ID {
+		http.Error(w, "Gallery not found", http.StatusNotFound)
+		return
+	}
+	var vd views.Data
+	vd.Yield = gallery
+	var form GalleryForm
+	if err := parseForm(r, &form); err != nil {
+		log.Println(err)
+		vd.SetAlert(err)
+		g.EditView.Render(w, vd)
+		return
+	}
+	gallery.Title = form.Title
+	// g.gs.Update
+	fmt.Fprintln(w, gallery)
+	// g.EditView.Render(w, vd)
 }
 
 // POST /galleries
