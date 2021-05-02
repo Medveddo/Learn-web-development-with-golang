@@ -111,20 +111,8 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cameCookie, err := r.Cookie("came_from_url")
-
-	// cameCookie does not exist
-	if err != nil {
-		//http: named cookie not present
-		// Successful login
-		// standart redirect
-		http.Redirect(w, r, "/cookietest", http.StatusFound)
-		return
-	}
-
-	// cameCookie exist
-	// redirect on a page where user came from
-	http.Redirect(w, r, cameCookie.Value, http.StatusFound)
+	http.Redirect(w, r, "/cookietest", http.StatusFound)
+	return
 }
 
 // is used to sign in the given user via cookies
@@ -151,40 +139,14 @@ func (u *Users) signIn(w http.ResponseWriter, user *models.User) error {
 
 // Used to display cookies set on the current user
 func (u *Users) CookieTest(w http.ResponseWriter, r *http.Request) {
-
-	/*
-		RIGHT HERE IF USER IS NOT LOGGED IN WE WANNA
-		cookieCame := http.Cookie {
-			Name: "came_from_url",
-			Value: "/cookietest",
-			HttpOnly: true,
-		}
-		http.SetCookie(w, &cookieCame)
-		AND THEN AFTER SUCCESSFUL LOGIN WE WILL REDIRECT USER TO
-		PAGE THAT CONTAINS IN THAT COOKIE
-		IF ITS EMPTY WE WILL REDIRECT HIM BY DEFAULT ROUTE
-	*/
-
 	cookie, err := r.Cookie("remember_token")
 	if err != nil {
-		cookieCame := http.Cookie{
-			Name:     "came_from_url",
-			Value:    "/cookietest",
-			HttpOnly: true,
-		}
-		http.SetCookie(w, &cookieCame)
-		http.Redirect(w, r, "/login", http.StatusFound)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	user, err := u.us.ByRemember(cookie.Value)
 	if err != nil {
-		cookieCame := http.Cookie{
-			Name:     "came_from_url",
-			Value:    "/cookietest",
-			HttpOnly: true,
-		}
-		http.SetCookie(w, &cookieCame)
-		http.Redirect(w, r, "/login", http.StatusFound)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	fmt.Fprintln(w, user)
