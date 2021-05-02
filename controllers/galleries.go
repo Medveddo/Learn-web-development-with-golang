@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"learn-web-dev-with-go/context"
 	"learn-web-dev-with-go/models"
 	"learn-web-dev-with-go/views"
@@ -86,9 +85,17 @@ func (g *Galleries) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	gallery.Title = form.Title
-	// g.gs.Update
-	fmt.Fprintln(w, gallery)
-	// g.EditView.Render(w, vd)
+	err = g.gs.Update(gallery)
+	if err != nil {
+		vd.SetAlert(err)
+		g.EditView.Render(w, vd)
+		return
+	}
+	vd.Alert = &views.Alert{
+		Level:   views.AlertLvlSuccess,
+		Message: "Gallery successfully updated!",
+	}
+	g.EditView.Render(w, vd)
 }
 
 // POST /galleries
