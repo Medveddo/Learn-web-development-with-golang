@@ -2,7 +2,11 @@
   <div class="row justify-content-md-center">
     <div class="col-md-10 col-md-offset-1">
       <h3>Edit your gallery</h3>
+      <a href="/galleries/{{.ID}}">
+        View this gallery
+      </a>
       <br>
+      <hr>
     </div>
     <div class="col-md-12"> 
       {{template "editGalleryForm" .}}
@@ -31,18 +35,23 @@
 {{end}}
 
 {{define "imagesSection"}}
-<div class="row md-12">
-    <label class="col-md-1 col-form-label"><b>Images</b></label>
-    <div class="col-md-10">
-      <ul>
-        {{range .Images}}
-          <li>
-            {{.}}
-          </li>
+  <div class="row justify-content-md-center">
+    {{range .ImagesSplitN 6}}
+      <div class="col-md-2">
+        {{range .}}
+          <a href="{{.}}">
+            <img src="{{.}}" class="thumbnail">
+          </a>
+          <br>
         {{end}}
-      </ul>
-    </div>
+      </div>
+    {{end}}
   </div>
+  <style>
+    .thumbnail {
+    width: 100%;
+    }
+  </style>
 {{end}}
 
 {{define "uploadImageForm"}}

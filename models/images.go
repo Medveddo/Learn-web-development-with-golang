@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type ImageService interface {
@@ -45,11 +46,26 @@ func (is *imageService) Create(galleryID uint, r io.ReadCloser, filename string)
 
 func (is *imageService) ByGalleryID(galleryID uint) ([]string, error) {
 	path := is.imagePath(galleryID)
-	strings, err := filepath.Glob(path + "*")
+	stringS, err := filepath.Glob(path + "*")
 	if err != nil {
 		return nil, err
 	}
-	return strings, nil
+
+	// separator := "" // IDK this code helps me or not
+	// if runtime.GOOS == "windows" {
+	// 	separator = "\\"
+	// } else {
+	// 	separator = "/"
+	// }
+
+	separator := "/"
+
+	for i := range stringS {
+		stringS[i] = strings.ReplaceAll(stringS[i], "\\", "/") // I think this line is only for Windows!! ????
+		stringS[i] = separator + stringS[i]
+	}
+
+	return stringS, nil
 }
 
 func (is *imageService) imagePath(galleryID uint) string {
