@@ -1,28 +1,66 @@
 {{define "yield"}}
   <div class="row justify-content-md-center">
-    <div class="col-md-6"> 
-      <div class="card border-primary">
-        <div class="card-header bg-primary">
-          <h5 class="card-title">Edit your gallery</h5>
-        </div>
-        <div class="card-body">
-          {{template "editGalleryForm" .}}
-        </div>
-      </div>
+    <div class="col-md-10 col-md-offset-1">
+      <h3>Edit your gallery</h3>
+      <br>
     </div>
+    <div class="col-md-12"> 
+      {{template "editGalleryForm" .}}
+      <br>
+      {{template "imagesSection"}}
+      
+      {{template "uploadImageForm" .}}
+      <br>
+      {{template "deleteGalleryForm" .}}
   </div>
 {{end}}
 
 {{define "editGalleryForm"}}
 <form action="/galleries/{{.ID}}/update" method="POST">
-  <div class="mb-6">
-    <label for="title" class="form-label">Title</label>
-    <input type="text" name="title" class="form-control" id="title" 
-    placeholder="What is the title of your gallery?" value="{{.Title}}">
+  <div class="row md-12">
+    <label for="title" class="col-md-1 col-form-label text-end"><b>Title</b></label>
+    <div class="col-md-10">
+      <input type="text" name="title" class="form-control" id="title"
+      placeholder="What is the title of your gallery?" value="{{.Title}}">
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
   </div>
-  <button type="submit" class="btn btn-primary">Update</button>
 </form>
+{{end}}
+
+{{define "imagesSection"}}
+<div class="row md-12">
+    <label class="col-md-1 col-form-label text-end"><b>Images</b></label>
+    <div class="col-md-10">
+      <label>Coming soon...</label>
+    </div>
+  </div>
+{{end}}
+
+
+{{define "uploadImageForm"}}
+<br>
+<form action="/galleries/{{.ID}}/images" method="POST" enctype="multipart/form-data">
+  <div class="row md-12">
+    <label for="images" class="col-md-1 col-form-label text-end"><b>Add images</b></label>
+    <div class="col-md-10">
+      <input class="form-control" type="file" multiple="multiple" id="images" name="images" aria-describedby="imagesHelp">
+      <div id="imagesHelp" class="form-text">Only use .png, .jpg, .jpeg files.</div>
+      <button type="submit" class="btn btn-primary">Upload</button>
+    </div>
+  </div>
+</form> 
+{{end}}
+
+{{define "deleteGalleryForm"}}
 <form action="/galleries/{{.ID}}/delete" method="POST" style="display: inline;">
-  <button type="submit" class="btn btn-danger">Delete</button>
+  <div class="row md-12">
+    <label class="col-md-1 col-form-label text-end"><b>Dangerous actions</b></label>
+    <div class="col-md-10">
+      <button type="submit" class="btn btn-danger">Delete gallery</button>
+    </div>
+  </div>
 </form>
 {{end}}

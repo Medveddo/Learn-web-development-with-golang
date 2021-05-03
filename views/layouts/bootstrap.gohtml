@@ -12,9 +12,11 @@
   <body>
     {{template "navbar" .}}
 <main class="container">
+    <br>
     {{if .Alert}}
       {{template "alert" .Alert}}
     {{end}}
+
     {{template "yield" .Yield}}
 
     {{template "footer"}}
