@@ -90,6 +90,7 @@ type GalleryDB interface {
 	Create(gallery *Gallery) error
 	Update(gallery *Gallery) error
 	Delete(id uint) error
+	ByUserID(userID uint) ([]Gallery, error)
 }
 
 type galleryGorm struct {
@@ -116,4 +117,10 @@ func (gg *galleryGorm) ByID(id uint) (*Gallery, error) {
 	db := gg.db.Where("id = ?", id)
 	err := first(db, &gallery)
 	return &gallery, err
+}
+
+func (gg *galleryGorm) ByUserID(userID uint) ([]Gallery, error) {
+	var galleries []Gallery
+	gg.db.Find(&galleries).Where("user_id = ?", userID)
+	return galleries, nil
 }
