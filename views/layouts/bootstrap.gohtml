@@ -10,7 +10,7 @@
     <title>MyWebApplication</title>
   </head>
   <body>
-    {{template "navbar"}}
+    {{template "navbar" .}}
 <main class="container">
     {{if .Alert}}
       {{template "alert" .Alert}}
