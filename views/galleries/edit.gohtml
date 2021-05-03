@@ -7,7 +7,7 @@
     <div class="col-md-12"> 
       {{template "editGalleryForm" .}}
       <br>
-      {{template "imagesSection"}}
+      {{template "imagesSection" .}}
       
       {{template "uploadImageForm" .}}
       <br>
@@ -34,7 +34,13 @@
 <div class="row md-12">
     <label class="col-md-1 col-form-label"><b>Images</b></label>
     <div class="col-md-10">
-      <label>Coming soon...</label>
+      <ul>
+        {{range .Images}}
+          <li>
+            {{.}}
+          </li>
+        {{end}}
+      </ul>
     </div>
   </div>
 {{end}}
