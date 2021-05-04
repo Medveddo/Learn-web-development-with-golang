@@ -4,7 +4,6 @@ import (
 	"learn-web-dev-with-go/models"
 	"learn-web-dev-with-go/rand"
 	"learn-web-dev-with-go/views"
-	"log"
 	"net/http"
 )
 
@@ -51,7 +50,6 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	var vd views.Data
 	var form SignupForm
 	if err := parseForm(r, &form); err != nil {
-		log.Println(err)
 		vd.SetAlert(err)
 		u.NewView.Render(w, r, vd)
 		return
@@ -87,7 +85,6 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 	vd := views.Data{}
 	var form LoginForm
 	if err := parseForm(r, &form); err != nil {
-		log.Println(err)
 		vd.SetAlert(err)
 		u.LoginView.Render(w, r, vd)
 		return

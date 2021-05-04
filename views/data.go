@@ -2,6 +2,7 @@ package views
 
 import (
 	"learn-web-dev-with-go/models"
+	"log"
 )
 
 const (
@@ -37,6 +38,7 @@ func (d *Data) SetAlert(err error) {
 			Message: pErr.Public(),
 		}
 	} else {
+		log.Println(err)
 		d.Alert = &Alert{
 			Level:   AlertLvlError,
 			Message: AlertMsgGeneric,
