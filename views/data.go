@@ -1,6 +1,8 @@
 package views
 
-import "learn-web-dev-with-go/models"
+import (
+	"learn-web-dev-with-go/models"
+)
 
 const (
 	AlertLvlError   = "danger"
