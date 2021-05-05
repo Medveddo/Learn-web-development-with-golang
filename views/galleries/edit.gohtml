@@ -79,7 +79,9 @@
 {{end}}
 
 {{define "deleteImageForm"}}
-<form action="/galleries/{{.GalleryID}}/images/{{.Filename}}/delete" method="POST" style="display: inline;">
+{{/* {{.Filename | urlquery}} */}}
+{{/* With | urlquery parameter images with filenames "something here" wont be deleted because they encoded like "something+here" whenever image name doesn't has + symbol */}}
+<form action="/galleries/{{.GalleryID}}/images/{{.Filename | urlquery}}/delete" method="POST" style="display: inline;">
   {{csrfField}}
   <button type="submit" class="btn btn-secondary">Delete</button>
 </form>
