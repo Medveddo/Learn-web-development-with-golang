@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"learn-web-dev-with-go/controllers"
 	"learn-web-dev-with-go/middleware"
@@ -13,8 +14,12 @@ import (
 )
 
 func main() {
-	cfg := DefaultConfig()
-	dbCfg := DefaultPostgresConfig()
+	// with up prod flag code want to load config from file otherwise it will panic
+	// w/o prod flag code just load up default config
+	boolPtr := flag.Bool("prod", false, "Provide this flag in production. This ensures that a .config file is provided before the application start")
+	flag.Parse()
+	cfg := LoadConfig(*boolPtr)
+	dbCfg := cfg.Database
 	services, err := models.NewServices(
 		models.WithGorm(dbCfg.Dialect(), dbCfg.ConnectionInfo()),
 		models.WithLogMode(!cfg.IsProd()),
