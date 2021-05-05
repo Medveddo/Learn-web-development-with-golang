@@ -12,20 +12,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "111"
-	dbname   = "mywebapp_dev"
-)
-
 func main() {
-	// Creating our database info string which will be passed to gorm.Open function and has all information needed to get successful connection
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	services, err := models.NewServices(psqlInfo)
+	cfg := DefaultConfig()
+	dbCfg := DefaultPostgresConfig()
+	services, err := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo())
 	must(err)
 
 	defer services.Close()
@@ -40,10 +30,10 @@ func main() {
 
 	// Middleware that provides our app
 	// with CSRF protection
-	isProd := false // TODO: Update this to be a config variable
+
 	b, err := rand.Bytes(32)
 	must(err)
-	csrfMw := csrf.Protect(b, csrf.Secure(isProd))
+	csrfMw := csrf.Protect(b, csrf.Secure(cfg.IsProd()))
 
 	userMw := middleware.User{
 		UserService: services.User,
@@ -83,8 +73,9 @@ func main() {
 	// POST /galleries/:id/images/:filename/delete
 	r.HandleFunc("/galleries/{id:[0-9]+}/images/{filename}/delete", requireUserMw.ApplyFn(galleriesC.ImageDelete)).Methods("POST")
 
-	fmt.Println("Starting server on :3000...")
-	http.ListenAndServe(":3000", csrfMw(userMw.Apply(r)))
+	// TODO: Config this
+	fmt.Printf("Starting server on :%d...\n", cfg.Port)
+	http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), csrfMw(userMw.Apply(r)))
 }
 
 func must(err error) {
