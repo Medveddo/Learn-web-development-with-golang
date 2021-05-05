@@ -32,14 +32,18 @@ func (c PostgresConfig) ConnectionInfo() string {
 }
 
 type Config struct {
-	Port int
-	Env  string
+	Port    int    `json:"port"`
+	Env     string `json:"env"`
+	Pepper  string `json:"pepper"`
+	HMACkey string `json:"hmac_key"`
 }
 
 func DefaultConfig() Config {
 	return Config{
-		Port: 3000,
-		Env:  "dev",
+		Port:    3000,
+		Env:     "dev",
+		Pepper:  "secret-random-string",
+		HMACkey: "secret-hmac-key",
 	}
 }
 
@@ -53,11 +57,6 @@ func (c Config) IsProd() bool {
 
 // fmt.Println("Starting server on :3000...")
 // http.ListenAndServe(":3000", csrfMw(userMw.Apply(r)))
-
-// # models/users.go
-
-// const userPwPepper = "secret-random-string"
-// const hmacSecretKey = "secret-hmac-key"
 
 // # models/services.go
 
