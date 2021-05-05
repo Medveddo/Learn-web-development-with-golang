@@ -21,6 +21,7 @@
 
 {{define "editGalleryForm"}}
 <form action="/galleries/{{.ID}}/update" method="POST">
+  {{csrfField}}
   <div class="row md-12">
     <label for="title" class="col-md-1 col-form-label"><b>Title</b></label>
     <div class="col-md-10">
@@ -48,12 +49,12 @@
       </div>
     {{end}}
   </div>
-
 {{end}}
 
 {{define "uploadImageForm"}}
 <br>
 <form action="/galleries/{{.ID}}/images" method="POST" enctype="multipart/form-data">
+  {{csrfField}}
   <div class="row md-12">
     <label for="images" class="col-md-1 col-form-label"><b>Add images</b></label>
     <div class="col-md-10">
@@ -67,6 +68,7 @@
 
 {{define "deleteGalleryForm"}}
 <form action="/galleries/{{.ID}}/delete" method="POST" style="display: inline;">
+  {{csrfField}}
   <div class="row md-12">
     <label class="col-md-1 col-form-label"><b>Dangerous actions</b></label>
     <div class="col-md-10">
@@ -78,6 +80,7 @@
 
 {{define "deleteImageForm"}}
 <form action="/galleries/{{.GalleryID}}/images/{{.Filename}}/delete" method="POST" style="display: inline;">
+  {{csrfField}}
   <button type="submit" class="btn btn-secondary">Delete</button>
 </form>
 {{end}}
