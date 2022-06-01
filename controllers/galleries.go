@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"fmt"
-	"learn-web-dev-with-go/context"
-	"learn-web-dev-with-go/models"
-	"learn-web-dev-with-go/views"
+	"learnwebdev/context"
+	"learnwebdev/models"
+	"learnwebdev/views"
 	"log"
 	"net/http"
 	"strconv"

@@ -23,8 +23,8 @@ func DefaultPostgresConfig() PostgresConfig {
 		Host:     "localhost",
 		Port:     5432,
 		User:     "postgres",
-		Password: "111",
-		Name:     "mywebapp_dev",
+		Password: "postgres",
+		Name:     "learnwebdev",
 	}
 }
 

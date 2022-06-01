@@ -1,8 +1,8 @@
 package models
 
 import (
-	"learn-web-dev-with-go/hash"
-	"learn-web-dev-with-go/rand"
+	"learnwebdev/hash"
+	"learnwebdev/rand"
 	"regexp"
 	"strings"
 

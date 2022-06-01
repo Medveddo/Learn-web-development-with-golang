@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"learn-web-dev-with-go/controllers"
-	"learn-web-dev-with-go/middleware"
-	"learn-web-dev-with-go/models"
-	"learn-web-dev-with-go/rand"
+	"learnwebdev/controllers"
+	"learnwebdev/middleware"
+	"learnwebdev/models"
+	"learnwebdev/rand"
 	"net/http"
 
 	"github.com/gorilla/csrf"

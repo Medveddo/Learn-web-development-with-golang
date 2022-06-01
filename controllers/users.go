@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"learn-web-dev-with-go/models"
-	"learn-web-dev-with-go/rand"
-	"learn-web-dev-with-go/views"
+	"learnwebdev/models"
+	"learnwebdev/rand"
+	"learnwebdev/views"
 	"net/http"
 )
 

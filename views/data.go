@@ -1,7 +1,7 @@
 package views
 
 import (
-	"learn-web-dev-with-go/models"
+	"learnwebdev/models"
 	"log"
 )
 

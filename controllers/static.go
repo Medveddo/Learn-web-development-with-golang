@@ -1,6 +1,6 @@
 package controllers
 
-import "learn-web-dev-with-go/views"
+import "learnwebdev/views"
 
 type Static struct {
 	Home    *views.View

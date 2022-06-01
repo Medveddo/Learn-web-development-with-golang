@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"learn-web-dev-with-go/context"
-	"learn-web-dev-with-go/models"
+	"learnwebdev/context"
+	"learnwebdev/models"
 	"net/http"
 	"strings"
 )

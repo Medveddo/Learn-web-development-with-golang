@@ -1,4 +1,6 @@
-# Галерея изображения на Golang
+# Golang images gallery
+
+## Description (RU)
 
 Данный репозиторий содержит исходный код онлайн-галереи, созданной в ходе курса *[Web Delvelopment with Go by Jon Calhoun](https://www.usegolang.com/)*
 
@@ -8,10 +10,24 @@
 
 Внешний вид - **[Bootstrap](https://getbootstrap.com/)**
 
-Формирование .html страниц - стандартная библиотека **html/template** 
+Формирование .html страниц - стандартная библиотека **html/template**
 
 Cookie - стандартная библиотека **net/http**
 
 Router, CSRF-protection, POST form parsing - **[Gorilla](https://www.gorillatoolkit.org/)**
 
 Запущена на Digital Ocean с web-сервером **[Caddy](https://caddyserver.com/)**
+
+## Launch
+
+I hope that works :)
+
+```bash
+
+# postgres is running on localhost:5432 with 'postgres' password and 'learnwebdev' DB 
+
+go mod tidy
+
+go run .
+
+```
